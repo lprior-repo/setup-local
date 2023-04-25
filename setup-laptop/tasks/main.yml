@@ -13,18 +13,15 @@
 # TODO Configure Git profile settings
 # TODO Configure SSH Keys
 
-# TODO Configure Zsh with proper vars
 - name: Run various roles
   ansible.builtin.include_role:
     name: "{{ item }}"
   loop:
   - gantsign.golang
-  - gantsign.oh-my-zsh
   - gantsign.minikube
   - gantsign.visual-studio-code
   - gantsign.helm
   - andrewrothstein.terraform
-
 
 - name: Add Golang to PATH
   blockinfile:
@@ -33,8 +30,3 @@
     block: |
       export GOPATH=$HOME/src
       export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-
-- name: Change shell to Zsh
-  ansible.builtin.user:
-    name: "{{ ansible_user }}"
-    shell: /bin/zsh
