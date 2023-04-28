@@ -8,10 +8,13 @@
     - software-properties-common
     - apt-transport-https
     - git
+    - kitty
+    - zsh
     state: present
 
 # TODO Configure Git profile settings
 # TODO Configure SSH Keys
+# TODO Install kitty
 
 - name: Run various roles
   ansible.builtin.include_role:

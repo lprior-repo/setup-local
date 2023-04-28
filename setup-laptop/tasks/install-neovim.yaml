@@ -1,0 +1,49 @@
+- name: Pull down repo, configure Neovim and move it to desired directory
+  hosts: localhost
+  become: true
+
+  roles:
+    - gikeymarcia.neovim
+  vars:
+    neovim: true
+    primary_user: family
+
+  tasks:
+    - name: Ensure git is installed
+      apt:
+        name: git
+        state: present
+
+    - name: Clone the repo into /tmp/neocode
+      git:
+        repo: "https://github.com/aserowy/neocode.git"
+        dest: /tmp/neocode
+
+    - name: Ensure destination directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - "/home/family/.config/nvim"
+        - "tmp/neocode"
+
+    - name: Copy contents of the git repo to the destination directory
+      ansible.builtin.copy:
+        src: tmp/neocode/
+        dest: /home/family/.config/nvim
+        remote_src: yes
+
+    - name: Test if Neovim is working properly
+      ansible.builtin.command:
+        cmd: nvim --version
+      register: neovim_test_result
+      failed_when: "'NVIM' not in neovim_test_result.stdout"
+
+    - name: Install Neovim plugins
+      ansible.builtin.command:
+        cmd: nvim
+
+    - name: Remove the source directory
+      ansible.builtin.file:
+        path: /tmp/neocode/
+        state: absent
